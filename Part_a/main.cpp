@@ -20,8 +20,7 @@ class maze
         int rows; // number of rows in the maze
         int cols; // number of columns in the maze
         matrix<bool> value;
-        matrix<int> map; // Mapping from maze (i,j) values to node
-        index values
+        matrix<int> map; // Mapping from maze (i,j) values to node index values
 };
 
 void maze::setMap(int i, int j, int n)
@@ -43,14 +42,14 @@ maze::maze(ifstream &fin)
     char x;
     value.resize(rows,cols);
     for (int i = 0; i <= rows-1; i++)
-    for (int j = 0; j <= cols-1; j++)
-    {
-    fin >> x;
-    if (x == 'O')
-    value[i][j] = true;
-    else
-    value[i][j] = false;
-    }
+        for (int j = 0; j <= cols-1; j++)
+        {
+            fin >> x;
+            if (x == 'O')
+                value[i][j] = true;
+            else
+                value[i][j] = false;
+        }
     map.resize(rows,cols);
 }
 
@@ -60,25 +59,25 @@ void maze::print(int goalI, int goalJ, int currI, int currJ)
 {
     cout << endl;
     if (goalI < 0 || goalI > rows || goalJ < 0 || goalJ > cols)
-    throw rangeError("Bad value in maze::print");
+        throw rangeError("Bad value in maze::print");
     if (currI < 0 || currI > rows || currJ < 0 || currJ > cols)
-    throw rangeError("Bad value in maze::print");
+        throw rangeError("Bad value in maze::print");
     for (int i = 0; i <= rows-1; i++)
     {
-    for (int j = 0; j <= cols-1; j++)
-    {
-    if (i == goalI && j == goalJ)
-    cout << "*";
-    else
-    if (i == currI && j == currJ)
-    cout << "+";
-    else
-    if (value[i][j])
-    cout << " ";
-    else
-    cout << "X";
-    }
-    cout << endl;
+        for (int j = 0; j <= cols-1; j++)
+        {
+            if (i == goalI && j == goalJ)
+                cout << "*";
+            else
+                if (i == currI && j == currJ)
+                    cout << "+";
+                else
+                    if (value[i][j])
+                        cout << " ";
+                    else
+                        cout << "X";
+        }
+        cout << endl;
     }
     cout << endl;
 }
@@ -87,7 +86,7 @@ bool maze::isLegal(int i, int j)
 // Return the value stored at the (i,j) entry in the maze.
 {
     if (i < 0 || i > rows || j < 0 || j > cols)
-    throw rangeError("Bad value in maze::isLegal");
+        throw rangeError("Bad value in maze::isLegal");
     return value[i][j];
 }
 void maze::mapMazeToGraph(maze &m, graph &g)
@@ -104,23 +103,23 @@ int main()
     fin.open(fileName.c_str());
     if (!fin)
     {
-    cerr << "Cannot open " << fileName << endl;
-    exit(1);
+        cerr << "Cannot open " << fileName << endl;
+        exit(1);
     }
     try
     {
-    graph g;
-    while (fin && fin.peek() != 'Z')
-    {
-    maze m(fin);
-    }
+        graph g;
+        while (fin && fin.peek() != 'Z')
+        {
+            maze m(fin);
+        }
     }
     catch (indexRangeError &ex)
     {
-    cout << ex.what() << endl; exit(1);
+        cout << ex.what() << endl; exit(1);
     }
     catch (rangeError &ex)
     {
-    cout << ex.what() << endl; exit(1);
+        cout << ex.what() << endl; exit(1);
     }
 }
