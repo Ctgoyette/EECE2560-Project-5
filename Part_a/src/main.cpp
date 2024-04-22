@@ -1,5 +1,5 @@
 // Project 5
-#include "../include/main.h"
+#include "../include/maze.h"
 
 int main()
 {
