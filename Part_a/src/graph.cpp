@@ -24,13 +24,16 @@ graph::graph(ifstream &fin)
    
    // Add nodes.
    for (int i = 0; i < n; i++)
+   {
       addNode();
+   }
 
    NumEdges = 0;
 
    while (fin.peek() != '.')
    {
       fin >> i >> j >> w;
+      cout << "i: " << i << " j: " << j << " w: " << w << endl;
       addEdge(i, j, w);
    }
 }
@@ -167,10 +170,10 @@ NodeWeight graph::getNodeWeight(int i) const
 // Returns the weight of node i.  Throws an exception if i is too
 // small or too large.
 {
-   if (i < 0 || i >= numNodes())
-      throw rangeError("Bad value in graph::getNodeWeight");
+    if (i < 0 || i >= numNodes())
+        throw rangeError("Bad value in graph::getNodeWeight");
 
-   return nodes[i].getWeight();
+    return nodes[i].getWeight();
 }
 
 void graph::setNodeWeight(int i, NodeWeight w)

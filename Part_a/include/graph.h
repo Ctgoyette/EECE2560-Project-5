@@ -57,6 +57,8 @@ class graph
    void clearVisit();
    bool allNodesVisited();
 
+   friend ostream &operator<<(ostream &ostr, const graph &g);
+
   private:
    matrix<edge> edges;
    vector<node> nodes;

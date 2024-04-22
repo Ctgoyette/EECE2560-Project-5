@@ -19,6 +19,8 @@ int main()
         while (fin && fin.peek() != 'Z')
         {
             maze m(fin);
+            m.mapMazeToGraph(m, g);
+            cout << g;
         }
     }
     catch (indexRangeError &ex)
