@@ -103,6 +103,7 @@ void maze::mapMazeToGraph(maze &m, graph &g)
 }
 
 void maze::nodesToMoves()
+//Converts the sequence of nodes traversed to solve the maze into a sequence of moves
 {
     int currentNode;
     int nextNode;
@@ -123,6 +124,7 @@ void maze::nodesToMoves()
 }
 
 vector<int> maze::posFromNode(int node)
+//Finds the coordinate positon of the specified node in the maze
 {
     int i = node/cols;
     int j = node%cols;
@@ -133,8 +135,13 @@ vector<int> maze::posFromNode(int node)
 }
 
 void maze::printMoves()
+//Prints the sequence of moves needed to solve the maze (i.e. Go left, Go right, etc.).
 {
+    cout << "\n###################\n" << endl;
+    cout << "Simulation start: " << endl;
     print(rows-1, cols-1, posFromNode(nodePath[0])[0], posFromNode(nodePath[0])[1]);
+    cout << "###################" << endl;
+
     for (int i = 1; i < nodePath.size(); i++)
     {
         cout << "###################\n" << endl;
@@ -144,32 +151,8 @@ void maze::printMoves()
     }
 }
 
-void maze::solveMaze(graph &g, int startingNode, int solvingMethod)
-{
-    nodePath.clear();
-    bool pathFound = 0;
-    if (solvingMethod == 0)
-        pathFound = findPathRecursive(g, startingNode);
-
-    if (!pathFound)
-    {
-        cout << "No path exists" << endl;
-    }
-    else 
-    {
-        nodesToMoves();
-        cout << "\n###\nSequence of Correct Moves:" << endl;
-        cout << moveSequence[0];
-        for (int i = 1; i < moveSequence.size(); i++)
-        {
-            cout << ", " << moveSequence[i];
-        }
-        cout << endl;
-    }
-    printMoves();
-}
-
 bool maze::findPathRecursive(graph &g, int currentNode)
+//Finds a path through the maze using recursive DFS.
 {
     g.visit(currentNode);
 
@@ -190,4 +173,89 @@ bool maze::findPathRecursive(graph &g, int currentNode)
         }
     }
     return false;
+}
+
+bool maze::findPathNonRecursive(graph &g, int startNode)
+//Finds a path through the maze using stack-based DFS.
+{
+    int endNode = g.numNodes()-1;
+
+    nodePath.push_back(startNode);
+    g.visit(startNode);
+ 
+    int currentNode = startNode;
+    while (currentNode != endNode)
+    {
+        for (int i = 0; i < g.numNodes(); i++)
+        {
+            if (g.isEdge(currentNode, i) && !g.isVisited(i))
+            {
+                nodePath.push_back(i);
+                g.visit(i);
+                currentNode = nodePath.back();
+                i = 0;
+            }
+
+            if (i == g.numNodes()-1 && currentNode != endNode)
+            {
+                nodePath.pop_back();
+                currentNode = nodePath.back();
+            }
+        }
+        if (nodePath.empty())
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void maze::solveMaze(graph &g, int startingNode, int solvingMethod)
+//Calls the appropriate maze-solving function, prints out the sequence of moves
+//and prints out a simulation of each move.
+{
+    nodePath.clear();
+    for (int i = 0; i < g.numNodes(); i++)
+        g.unVisit(i);
+
+    bool pathFound = 0;
+    if (solvingMethod == 0)
+    {
+        cout << "\n//-----------------------------//" << endl;
+        cout << "// Solving with recursive DFS: //" << endl;
+        cout << "//-----------------------------//" << endl;
+        pathFound = findPathRecursive(g, startingNode);
+    }
+    else if (solvingMethod == 1)
+    {
+        cout << "\n//-----------------------------------------------//" << endl;
+        cout << "// Solving with non-recursive (stack-based) DFS: //" << endl;
+        cout << "//-----------------------------------------------//" << endl;
+        pathFound = findPathNonRecursive(g, startingNode);
+    }
+
+    if (!pathFound)
+    {
+        cout << "No path exists" << endl;
+    }
+    else 
+    {
+        nodesToMoves();
+        cout << "\nSequence of Nodes Traversed:" << endl;
+        cout << nodePath[0];
+        for (int i = 1; i < nodePath.size(); i++)
+        {
+            cout << ", " << nodePath[i];
+        }
+        cout << endl;
+
+        cout << "\nSequence of Correct Moves:" << endl;
+        cout << moveSequence[0];
+        for (int i = 1; i < moveSequence.size(); i++)
+        {
+            cout << ", " << moveSequence[i];
+        }
+        cout << endl;
+    }
+    printMoves();
 }

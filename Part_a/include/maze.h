@@ -17,6 +17,8 @@ class maze
         void nodesToMoves();
         void printMoves();
         vector<int> posFromNode(int node);
+        bool findPathNonRecursive(graph &g, int startNode);
+
     private:
         int rows; // number of rows in the maze
         int cols; // number of columns in the maze
