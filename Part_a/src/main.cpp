@@ -20,7 +20,7 @@ int main()
         {
             maze m(fin);
             m.mapMazeToGraph(m, g);
-            cout << g;
+            m.solveMaze(g, 0, 0);
         }
     }
     catch (indexRangeError &ex)
@@ -31,4 +31,5 @@ int main()
     {
         cout << ex.what() << endl; exit(1);
     }
+    cout << endl;
 }

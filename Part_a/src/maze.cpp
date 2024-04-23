@@ -6,7 +6,7 @@ void maze::setMap(int i, int j, int n)
     map[i][j] = n;
 }
 
-int maze ::getMap(int i, int j) const
+int maze::getMap(int i, int j) const
 // Return mapping of maze cell (i,j) in the graph.
 {
     return map[i][j];
@@ -100,4 +100,94 @@ void maze::mapMazeToGraph(maze &m, graph &g)
             }
         }
     }
+}
+
+void maze::nodesToMoves()
+{
+    int currentNode;
+    int nextNode;
+    moveSequence.clear();
+    for (int i = 0; i < nodePath.size()-1; i++)
+    {
+        currentNode = nodePath[i];
+        nextNode = nodePath[i+1];
+        if (nextNode-currentNode == 1)
+            moveSequence.push_back("Go right");
+        else if (nextNode-currentNode == -1)
+            moveSequence.push_back("Go left");
+        else if (nextNode-currentNode == 10)
+            moveSequence.push_back("Go down");
+        else
+            moveSequence.push_back("Go up");
+    }
+}
+
+vector<int> maze::posFromNode(int node)
+{
+    int i = node/cols;
+    int j = node%cols;
+    vector<int> coordinates;
+    coordinates.push_back(i);
+    coordinates.push_back(j);
+    return coordinates;
+}
+
+void maze::printMoves()
+{
+    print(rows-1, cols-1, posFromNode(nodePath[0])[0], posFromNode(nodePath[0])[1]);
+    for (int i = 1; i < nodePath.size(); i++)
+    {
+        cout << "###################\n" << endl;
+        cout << moveSequence[i-1] << ":" << endl;
+        print(rows-1, cols-1, posFromNode(nodePath[i])[0], posFromNode(nodePath[i])[1]);
+        cout << "###################" << endl;
+    }
+}
+
+void maze::solveMaze(graph &g, int startingNode, int solvingMethod)
+{
+    nodePath.clear();
+    bool pathFound = 0;
+    if (solvingMethod == 0)
+        pathFound = findPathRecursive(g, startingNode);
+
+    if (!pathFound)
+    {
+        cout << "No path exists" << endl;
+    }
+    else 
+    {
+        nodesToMoves();
+        cout << "\n###\nSequence of Correct Moves:" << endl;
+        cout << moveSequence[0];
+        for (int i = 1; i < moveSequence.size(); i++)
+        {
+            cout << ", " << moveSequence[i];
+        }
+        cout << endl;
+    }
+    printMoves();
+}
+
+bool maze::findPathRecursive(graph &g, int currentNode)
+{
+    g.visit(currentNode);
+
+    if (getMap(rows-1, cols-1) == currentNode)
+    {
+        nodePath.insert(nodePath.begin(), currentNode);
+        return true;
+    }
+    for (int i = 0; i < g.numNodes(); i++)
+    {
+        if (g.isEdge(currentNode, i) && !g.isVisited(i))
+        {
+            if (findPathRecursive(g, i))
+            {
+                nodePath.insert(nodePath.begin(), currentNode);
+                return true;
+            }
+        }
+    }
+    return false;
 }
