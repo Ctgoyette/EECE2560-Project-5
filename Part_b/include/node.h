@@ -7,7 +7,8 @@
 #include "d_except.h"
 #include <list>
 #include <stack>
-
+#include <queue>
+#include <vector>
 
 using namespace std;
 

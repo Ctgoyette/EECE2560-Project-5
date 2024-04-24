@@ -152,6 +152,31 @@ void maze::printMoves()
 }
 
 
+bool maze::findShortestPath1(graph &g, int startNode)
+// Finds the shortest path using BFS 
+{
+	queue<vector<int>> q;
+	vector<int> currentPath; currentPath.push_back(startNode);
+	q.push(currentPath);
+	g.visit(startNode);
+
+	while(q.empty != false)
+	{
+		currentPath = q.pop();
+		g.visit(currentPath.last())
+		if currentNode == 
+	}
+}
+
+
+bool maze::findShortestPath2(graph &g, int startNode)
+// Finds the shortest path using Dijkstra's algorithm
+{
+	
+	
+}
+
+
 bool maze::findPathRecursive(graph &g, int currentNode)
 //Finds a path through the maze using recursive DFS.
 {
