@@ -159,12 +159,119 @@ bool maze::findShortestPath1(graph &g, int startNode)
 	vector<int> currentPath; currentPath.push_back(startNode);
 	q.push(currentPath);
 	g.visit(startNode);
+	int currentNode = startNode;
+	vector<int> tempPath;
+	int endNode = g.numNodes()-1;
 
-	while(q.empty != false)
+	while(q.empty() == false)
 	{
-		currentPath = q.pop();
-		g.visit(currentPath.last())
-		if currentNode == 
+		currentPath = q.front();
+		q.pop();
+		currentNode = currentPath.back();
+		g.visit(currentNode);
+		if (currentNode != endNode)
+		{
+			for (int i = 0; i < g.numNodes(); i++)
+		    	{
+				if (g.isEdge(currentNode, i) && !g.isVisited(i))
+				{
+					tempPath = currentPath;
+					tempPath.push_back(i);
+				    	q.push(tempPath);
+				}
+		    	}
+		}
+		else {nodePath = currentPath; return true;}
+	}
+	return false;
+}
+
+
+void maze::findShortestPathWrapper(graph &g, int startNode, bool method)
+{
+    nodePath.clear();
+    for (int i = 0; i < g.numNodes(); i++)
+        g.unVisit(i);
+
+    bool pathFound = 0;
+    if (method == 0)
+    {
+        cout << "\n//--------------------------------------------------//" << endl;
+        cout << "// Finding Shortest Path with Dijkstra's Algorithm: //" << endl;
+        cout << "//--------------------------------------------------//" << endl;
+        pathFound = findShortestPath2(g, startNode);
+    }
+    else if (method == 1)
+    {
+        cout << "\n//---------------------------------------------//" << endl;
+        cout << "// Finding Shortest Path with Queue based BFS: //" << endl;
+        cout << "//---------------------------------------------//" << endl;
+        pathFound = findShortestPath1(g, startNode);
+    }
+
+    if (!pathFound)
+    {
+        cout << "No path exists" << endl;
+    }
+    else 
+    {
+        nodesToMoves();
+        cout << "\nSequence of Nodes Traversed:" << endl;
+        cout << nodePath[0];
+        for (int i = 1; i < nodePath.size(); i++)
+        {
+            cout << ", " << nodePath[i];
+        }
+        cout << endl;
+
+        cout << "\nSequence of Correct Moves:" << endl;
+        cout << moveSequence[0];
+        for (int i = 1; i < moveSequence.size(); i++)
+        {
+            cout << ", " << moveSequence[i];
+        }
+        cout << endl;
+    }
+    printMoves();
+}
+
+
+int getMinEdge(const graph &g,const vector<int> &dist)
+{
+	int min_value = 999999;
+	int min_index = 0;
+	for (int i = 0; i < g.numNodes(); i++)
+	{
+		if (!g.isVisited(i))
+		{
+			if (dist[i] < min_value)
+			{
+				min_value = dist[i];
+				min_index = i;
+				cout << "MIN INDEX: " << min_index << endl;
+			}
+		}
+	}
+	return min_index;
+}
+
+
+void maze::setPath(const int startNode, const int currentNode, vector<int> prev)
+{
+	int i = currentNode;
+	vector<int> tempPath;
+	tempPath.push_back(currentNode);
+	while (i != startNode)
+	{
+		tempPath.push_back(prev[i]);
+		i = prev[i];
+	}
+	
+	int size = tempPath.size();
+	nodePath.resize(size);
+	for (int i = 0; i < size; i++)
+	{	
+		nodePath[i] = tempPath[size-1-i];
 	}
 }
 
@@ -172,8 +279,60 @@ bool maze::findShortestPath1(graph &g, int startNode)
 bool maze::findShortestPath2(graph &g, int startNode)
 // Finds the shortest path using Dijkstra's algorithm
 {
+	// Instantiating constants to be used
+	int infinity = 999999;
+	int undefined = -1;
+	int endNode = g.numNodes()-1;
 	
+	vector<int> dist;
+	vector<int> prev;
+	vector<int> workingNodes;
+	vector<int> finishedNodes;
+	int currentNode;
+	int tempNode;
+	int min_idx;
 	
+	for (int i = 0; i < g.numNodes(); i++)
+	{
+		dist.push_back(infinity);
+		prev.push_back(undefined);
+		workingNodes.push_back(i);
+	}
+	dist[startNode] = 0;
+
+	int alt;
+	currentNode = startNode;
+	
+	while(finishedNodes.size() != g.numNodes())
+	{
+		//currentNode = workingNodes.front();
+		g.visit(currentNode);
+		//workingNodes.erase(workingNodes.begin(), workingNodes.begin() + currentNode);
+
+		if (currentNode != endNode)
+		{
+			for (int i = 0; i < g.numNodes(); i++)
+			{
+				if (g.isEdge(currentNode, i) && !g.isVisited(i))
+				{
+					alt = dist[currentNode] + 1;
+					if (alt < dist[i])
+					{
+						prev[i] = currentNode;
+						dist[i] = alt;
+					}
+				}
+			}
+		}
+		else 
+		{
+			setPath(startNode, currentNode, prev); 
+			return true;
+		}
+		finishedNodes.push_back(currentNode);
+		currentNode = getMinEdge(g, dist);
+	}	
+	return false;
 }
 
 
@@ -200,6 +359,7 @@ bool maze::findPathRecursive(graph &g, int currentNode)
     }
     return false;
 }
+
 
 bool maze::findPathNonRecursive(graph &g, int startNode)
 //Finds a path through the maze using stack-based DFS.
@@ -235,6 +395,7 @@ bool maze::findPathNonRecursive(graph &g, int startNode)
     }
     return true;
 }
+
 
 void maze::solveMaze(graph &g, int startingNode, int solvingMethod)
 //Calls the appropriate maze-solving function, prints out the sequence of moves

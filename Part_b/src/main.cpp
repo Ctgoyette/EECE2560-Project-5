@@ -25,8 +25,10 @@ int main()
             {
                 maze m(fin);
                 m.mapMazeToGraph(m, g);
-                m.solveMaze(g, 0, 0);
-                m.solveMaze(g, 0, 1);
+                //m.solveMaze(g, 0, 0);
+                //m.solveMaze(g, 0, 1);
+                //m.findShortestPathWrapper(g, 0, 0);
+                m.findShortestPathWrapper(g, 0, 0);
             }
         }
         catch (indexRangeError &ex)

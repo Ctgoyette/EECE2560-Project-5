@@ -18,6 +18,10 @@ class maze
         void printMoves();
         vector<int> posFromNode(int node);
         bool findPathNonRecursive(graph &g, int startNode);
+        void findShortestPathWrapper(graph &g, int startNode, bool method);
+        bool findShortestPath1(graph &g, int startNode);
+        bool findShortestPath2(graph &g, int startNode);
+        void setPath(const int startNode, const int currentNode, vector<int> prev);
 
     private:
         int rows; // number of rows in the maze
