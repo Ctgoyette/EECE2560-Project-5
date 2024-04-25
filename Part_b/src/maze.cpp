@@ -248,7 +248,6 @@ int getMinEdge(const graph &g,const vector<int> &dist)
 			{
 				min_value = dist[i];
 				min_index = i;
-				cout << "MIN INDEX: " << min_index << endl;
 			}
 		}
 	}
